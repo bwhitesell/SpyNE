@@ -3,22 +3,24 @@ import numpy as np
 from .utils import is_ndarray, is_scalar
 
 
-
 class OperationBase:
     name = 'Base Operation'
 
-    def __init__(self, A, B):
-        self.A = A
-        self.B = B
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
         self._check_types()
         self.value = self.execute()
 
+    def execute(self):
+        pass
+
     def is_single_dim(self):
-        return len(self.A.shape) == 1, len(self.B.shape) == 1
+        return len(self.a.shape) == 1, len(self.a.shape) == 1
 
     def _check_types(self):
-        if is_ndarray(self.A) and is_ndarray(self.B):
-            if not is_scalar(self.A) or not is_scalar(self.B):
+        if is_ndarray(self.a) and is_ndarray(self.b):
+            if not is_scalar(self.a) or not is_scalar(self.b):
                 return True
 
         raise ValueError(f"""Invalid types, {self.name} is an operation 
@@ -29,35 +31,59 @@ class TensorAddition(OperationBase):
     name = 'Tensor Addition'
 
     def execute(self):
-        np.add(self.A, self.B)
+        np.add(self.a, self.a)
 
+    @staticmethod
     def vector_jacobian_product(self):
-        pass
+        def a_vjp(self):
+            return lambda g: g
+
+        def b_vjp(self):
+            return lambda g: g
+
+        return a_vjp, b_vjp
+
+
+class TensorSubtraction(OperationBase):
+    name = 'Tensor Subtraction'
+
+    def execute(self):
+        np.add(self.a, self.b)
+
+    @staticmethod
+    def vector_jacobian_product(self):
+        def a_vjp(self):
+            return lambda g: -1 * g
+
+        def b_vjp(self):
+            return lambda g: -1 * g
+
+        return a_vjp, b_vjp
 
 
 class TensorMultiply(OperationBase):
     name = 'Tensor Multiplication'
 
     def execute(self):
-        return np.dot(self.A, self.B)
+        return np.dot(self.a, self.b)
 
     def vector_jacobian_product(self):
         """ Returns the VJPs for the Jacobians of the arguments. """
 
-        def A_vjp(self):
+        def a_vjp(self):
             """ Jacobian of operation with respect to A """
-            A_sd, B_sd = self.is_single_dim()
-            if B_sd:
-                return lambda G: np.tensordot(G, self.B, 0)
+            a_sd, b_sd = self.is_single_dim()
+            if b_sd:
+                return lambda g: np.tensordot(g, self.b, 0)
             else:
-                return lambda G: np.dot(G, np.swapaxes(self.B, -1, -2))
+                return lambda g: np.dot(g, np.swapaxes(self.b, -1, -2))
 
         def B_vjp(self):
             """ Jacobian of operation with respect to B """
-            A_sd, B_sd = self.is_single_dim()
-            if A_sd:
-                return lambda G: np.tensordot(G, self.A, 0)
+            a_sd, b_sd = self.is_single_dim()
+            if a_sd:
+                return lambda g: np.tensordot(g, self.a, 0)
             else:
-                return lambda G: np.dot(G, np.swapaxes(self.A, -1, -2))
+                return lambda g: np.dot(g, np.swapaxes(self.a, -1, -2))
 
-        return A_vjp(self), B_vjp(self)
+        return a_vjp(self), a_vjp(self)
