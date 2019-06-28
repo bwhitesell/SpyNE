@@ -35,11 +35,11 @@ class TensorAddition(OperationBase):
 
     @staticmethod
     def vector_jacobian_product(self):
-        def a_vjp(self):
-            return lambda g: g
+        def a_vjp(g):
+            return g
 
-        def b_vjp(self):
-            return lambda g: g
+        def b_vjp(g):
+            return g
 
         return a_vjp, b_vjp
 
@@ -52,14 +52,70 @@ class TensorSubtraction(OperationBase):
 
     @staticmethod
     def vector_jacobian_product(self):
-        def a_vjp(self):
-            return lambda g: -1 * g
+        def a_vjp(g):
+            return -1 * g
 
-        def b_vjp(self):
-            return lambda g: -1 * g
+        def b_vjp(g):
+            return -1 * g
 
         return a_vjp, b_vjp
 
+
+class TensorReLU(OperationBase):
+    name = 'Tensor ReLU'
+
+    def __init__(self, a):
+        self.a = a
+        self._check_types()
+        self.value = self.execute()
+
+    def execute(self):
+        return self.a * (self.a > 0)
+
+    def vector_jacobian_product(self):
+        def a_vjp(g):
+           return g * np.where(self.a > 0, 1, 0)
+        return a_vjp
+
+
+class TensorTanh(OperationBase):
+    name = 'Tensor Tanh'
+
+    def __init__(self, a):
+        self.a = a
+        self._check_types()
+        self.value = self.execute()
+
+    def execute(self):
+        return np.tanh(self.a)
+
+    def vector_jacobian_product(self):
+        def a_vjp(g):
+            return g * 1 / np.square(np.cosh(self.a))
+        return a_vjp
+
+
+class TensorSigmoid(OperationBase):
+    name = 'Tensor Sigmoid'
+
+    def __init__(self, a):
+        self.a = a
+        self._check_types()
+        self.value = self.execute()
+
+    def execute(self):
+        e = np.exp(self.a)
+        return e / (e + 1)
+
+    def vector_jacobian_product(self):
+        def a_vjp(g):
+            e = np.exp(self.a)
+            return g * (e / (e**2 + 1))
+
+        return a_vjp
+
+
+class Tensor
 
 class TensorMultiply(OperationBase):
     name = 'Tensor Multiplication'
