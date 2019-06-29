@@ -5,6 +5,7 @@ A "pure" python implementation of reverse mode automatic differentiation.
 ```
 In Development
 
-- Building Operation Nodes, defining VJPs.
+- Defining VJPs.
+- Implementing Backwards Pass Logic
 
 ```
