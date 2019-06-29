@@ -1,9 +1,8 @@
 import numpy as np
 
-
-def is_ndarray(x):
-    return type(x) == np.ndarray
+from variables import Tensor, TensorConst
 
 
-def is_scalar(x):
-    return x.shape == ()
+def is_tensor(x):
+    return type(x) == Tensor or type(x) == TensorConst
+
