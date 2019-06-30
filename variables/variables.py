@@ -7,8 +7,9 @@ class TensorBase:
     instead lets just wrap an instance so it is clear which ndarrays are variables
     and which are constants.
     """
+    node_uid = ''
 
-    def __init__(self, md_array):
+    def __init__(self, md_array, name=None):
         if type(md_array) == list:
             self.value = np.array(md_array)
         elif type(md_array) == np.ndarray:
@@ -16,15 +17,30 @@ class TensorBase:
         else:
             raise ValueError("Arguments must be of type 'list' or 'np.ndarray'")
 
+        self._assign_uid()
+
+        if name:
+            if type(name) == str:
+                self.node_uid = name
+            else:
+                raise ValueError("Argument 'name' must be of type 'str'")
+
     def __repr__(self):
         return 'Tensor( \n' + self.value.__str__() + '\n)'
+
+    def _assign_uid(self):
+        self.node_uid = str(hash(np.random.random()))
+
+    @property
+    def shape(self):
+        return self.value.shape
 
 
 class Tensor(TensorBase):
     name = 'Tensor'
 
 
-class TensorConst:
+class TensorConst(TensorBase):
     name = 'Tensor Constant'
 
 

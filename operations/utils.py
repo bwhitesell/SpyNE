@@ -1,6 +1,4 @@
-import numpy as np
-
-from variables import Tensor, TensorConst
+from variables.variables import Tensor, TensorConst
 
 
 def is_tensor(x):

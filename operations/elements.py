@@ -1,39 +1,27 @@
 import numpy as np
 
 from .base import UniTensorOperation
-from variables import Tensor
 
 
 class TensorSum(UniTensorOperation):
     name = 'Tensor Sum'
 
-    def __init__(self, a):
-        self.a = a
-        self._check_types()
-        self.value = self.execute()
-
     def execute(self):
-        return Tensor(self.a.sum())
+        return self._a.sum()
 
-    @staticmethod
-    def vector_jacobian_product():
-        def a_vjp(g):
-            return g.sum()
-        return a_vjp
-
+    def vector_jacobian_product(self, g):
+        internal_shape = self._a.shape
+        if g.shape == ():
+            return g * np.ones(internal_shape)
+        else:
+            raise NotImplementedError('''the VJP of TensorSum can only handle 
+                                      scalar arguments for now.''')
 
 class TensorSquared(UniTensorOperation):
     name = 'Tensor Square'
 
-    def __init__(self, a):
-        self.a = a
-        self._check_types()
-        self.value = self.execute()
-
     def execute(self):
-        return Tensor(np.square(self.a))
+        return np.square(self._a)
 
-    def vector_jacobian_product(self):
-        def a_vjp(g):
-            return g * 2 * self.a
-        return a_vjp
+    def vector_jacobian_product(self, g):
+        return g * 2 * self._a

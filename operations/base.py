@@ -1,24 +1,32 @@
 import numpy as np
 
-from variables import Tensor, TensorConst
+from variables.variables import Tensor, TensorConst
 
 
 class BaseOperation:
     name = 'Base Operation'
+    node_uid = ''
     children = {}
 
-    def execute(self):
-        pass
+    def __init__(self):
+        self._assign_uid()
+        self.value = self.execute()
 
     def __setattr__(self, key, value):
         if hasattr(value, 'value'):
-            self.__dict__[key] = value.value
-            self.__dict__['_' + key] = value
+            self.__dict__[key] = value
+            self.__dict__['_' + key] = value.value
         else:
             self.__dict__[key] = value
 
     def __repr__(self):
         return 'Tensor( \n' + self.value.__str__() + '\n)'
+
+    def _assign_uid(self):
+        self.node_uid = str(hash(np.random.random()))
+
+    def execute(self):
+        pass
 
     @staticmethod
     def is_operation(x):
@@ -28,13 +36,17 @@ class BaseOperation:
     def is_tensor(x):
         return type(x) == Tensor or type(x) == TensorConst
 
+    @property
+    def shape(self):
+        return self.value.shape
+
 
 class UniTensorOperation(BaseOperation):
 
     def __init__(self, a):
         self._check_type(a)
         self.a = a
-        self.value = self.execute()
+        super().__init__()
 
     def is_single_dim(self):
         return len(self._a.shape) == 1
@@ -51,7 +63,7 @@ class DualTensorOperation(BaseOperation):
         self._check_types(a, b)
         self.a = a
         self.b = b
-        self.value = self.execute()
+        super().__init__()
 
     def is_single_dim(self):
         return len(self.a.shape) == 1, len(self.b.shape) == 1

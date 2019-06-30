@@ -1,47 +1,35 @@
 import numpy as np
 
-from .base import UniTensorOperation, DualTensorOperation
-from variables import Tensor
+from .base import DualTensorOperation
+
 
 class TensorAddition(DualTensorOperation):
     name = 'Tensor Addition'
 
     def execute(self):
-        return Tensor(np.add(self.a, self.b))
+        return np.add(self._a, self._b)
 
     @staticmethod
-    def vector_jacobian_product(self):
-        def a_vjp(g):
-            return g
-
-        def b_vjp(g):
-            return g
-
-        return a_vjp, b_vjp
+    def vector_jacobian_product(g):
+        return g, g
 
 
 class TensorSubtraction(DualTensorOperation):
     name = 'Tensor Subtraction'
 
     def execute(self):
-        return Tensor(np.add(self.a, self.b))
+        return np.add(self._a, self._b)
 
     @staticmethod
-    def vector_jacobian_product(self):
-        def a_vjp(g):
-            return -1 * g
-
-        def b_vjp(g):
-            return -1 * g
-
-        return a_vjp, b_vjp
+    def vector_jacobian_product(g):
+        return -1 * g, -1 * g
 
 
 class TensorMultiply(DualTensorOperation): 
     name = 'Tensor Multiplication'
 
     def execute(self):
-        return Tensor(np.dot(self.a, self.b))
+        return np.dot(self._a, self._b)
 
     def vector_jacobian_product(self):
         """ Returns the VJPs for the Jacobians of the arguments. """
