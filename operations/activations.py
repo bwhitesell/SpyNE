@@ -9,8 +9,13 @@ class TensorReLU(UniTensorOperation):
     def execute(self):
         return self._a * (self._a > 0)
 
-    def vector_jacobian_product(self, g):
-        return g * np.where(self._a > 0, 1, 0)
+    def vector_jacobian_product(self):
+        a = self._a
+
+        def a_vjp(g):
+            return g * np.where(a > 0, 1, 0)
+
+        return a_vjp
 
 
 class TensorTanh(UniTensorOperation):
@@ -19,8 +24,13 @@ class TensorTanh(UniTensorOperation):
     def execute(self):
         return np.tanh(self._a)
 
-    def vector_jacobian_product(self, g):
-        return g * 1 / np.square(np.cosh(self._a))
+    def vector_jacobian_product(self):
+        a = self._a
+
+        def a_vjp(g):
+            return g * 1 / np.square(np.cosh(a))
+
+        return a_vjp
 
 
 class TensorSigmoid(UniTensorOperation):
@@ -30,6 +40,11 @@ class TensorSigmoid(UniTensorOperation):
         e = np.exp(self._a)
         return e / (e + 1)
 
-    def vector_jacobian_product(self, g):
+    def vector_jacobian_product(self):
         e = np.exp(self._a)
-        return g * (e / (e**2 + 1))
+
+        def a_vjp(g):
+            return g * (e / (e**2 + 1))
+
+        return a_vjp
+

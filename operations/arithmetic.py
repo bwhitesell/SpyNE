@@ -10,8 +10,14 @@ class TensorAddition(DualTensorOperation):
         return np.add(self._a, self._b)
 
     @staticmethod
-    def vector_jacobian_product(g):
-        return g, g
+    def vector_jacobian_product():
+        def a_vjp(g):
+            return g
+
+        def b_vjp(g):
+            return g
+
+        return a_vjp, b_vjp
 
 
 class TensorSubtraction(DualTensorOperation):
@@ -21,8 +27,14 @@ class TensorSubtraction(DualTensorOperation):
         return np.add(self._a, self._b)
 
     @staticmethod
-    def vector_jacobian_product(g):
-        return -1 * g, -1 * g
+    def vector_jacobian_product():
+        def a_vjp(g):
+            return -1 * g
+
+        def b_vjp(g):
+            return -1 * g
+
+        return a_vjp, b_vjp
 
 
 class TensorMultiply(DualTensorOperation): 

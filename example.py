@@ -9,12 +9,14 @@ import time
 
 def compute(x):
     a = Tensor(x, name='x')
-    b = TensorConst(np.random.random((50,50)), name='b')
+    b = TensorConst([[1, 2], [3, 4]], name='b')
     c = TensorAddition(a, b)
     d = TensorSigmoid(c)
     e = TensorAddition(c, d)
 
     return e, Gradient(e).jacobians['x']
 
-print(compute(np.random.random((50,50))))
+print(
+    compute([[1, 2], [3, 4]])
+)
 
