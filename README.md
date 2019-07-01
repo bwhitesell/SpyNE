@@ -1,4 +1,4 @@
-# SpyNN
+# SpyNE
 A "pure" python implementation of reverse mode automatic differentiation.
 
 #### Project Status
@@ -6,6 +6,6 @@ A "pure" python implementation of reverse mode automatic differentiation.
 In Development
 
 - Defining VJPs.
-- Implementing Backwards Pass Logic
+- Cleanup + DRYing code
 
 ```
