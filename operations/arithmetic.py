@@ -45,21 +45,20 @@ class TensorMultiply(DualTensorOperation):
 
     def vector_jacobian_product(self):
         """ Returns the VJPs for the Jacobians of the arguments. """
+        a = self._a
+        b = self._b
 
-        def a_vjp(self):
-            """ g dotted with Jacobian of operation with respect to A"""
-            a_sd, b_sd = self.is_single_dim()
-            if b_sd:
-                return lambda g: np.tensordot(g, self.b, 0)
-            else:
-                return lambda g: np.dot(g, np.swapaxes(self.b, -1, -2))
+        if len(self._a.shape) >= 1 and len(self._b.shape) >= 1:
+            def a_vjp(g):
+                """ g dotted with Jacobian of operation with respect to A"""
+                return np.dot(g, np.swapaxes(b, -1, -2))
 
-        def B_vjp(self):
-            """ g dotted with Jacobian of operation with respect to B """
-            a_sd, b_sd = self.is_single_dim()
-            if a_sd:
-                return lambda g: np.tensordot(g, self.a, 0)
-            else:
-                return lambda g: np.dot(g, np.swapaxes(self.a, -1, -2))
+            def b_vjp(g):
+                """ g dotted with Jacobian of operation with respect to B """
+                return np.dot(np.swapaxes(a, -1, -2), g)
 
-        return a_vjp(self), a_vjp(self)
+        else:
+            raise NotImplementedError('''the VJP builder for TensorMultiply can only handle 
+                                      non-scalar arguments for now.''')
+
+        return a_vjp, b_vjp
