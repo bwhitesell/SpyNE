@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/bwhitesell/spyne/master/LogoMakr_2P13kO.png">
+    <img src="https://raw.githubusercontent.com/bwhitesell/spyne/master/logo.png">
 </div>
 
 # SpyNE
