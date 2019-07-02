@@ -1,4 +1,6 @@
-
+<div align="center">
+    <img src="https://raw.githubusercontent.com/bwhitesell/spyne/master/LogoMakr_2P13kO.png">
+</div>
 
 # SpyNE
 SpyNE is a minimalist deep learning famework written 
@@ -26,15 +28,14 @@ learning frameworks.
 #### Project Status
 ```
 Completed
+- Auto Diff (Reverse Mode)
 
 
 In Development
-- Auto Diff (Reverse Mode)
-    - TensorMultiply VJP
-    -DRYing Code
     
 Not Implemented
 - Optimization Engines
+- Neural API
 
 
 ```
