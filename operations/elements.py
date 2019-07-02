@@ -9,10 +9,11 @@ class TensorSum(UniTensorOperation):
     def execute(self):
         return self._a.sum()
 
-    def vector_jacobian_product(self):
+    def vector_jacobian_product(self, func):
         internal_shape = self._a.shape
 
         def a_vjp(g):
+            g = func(g)
             if g.shape == ():
                 return g * np.ones(internal_shape)
             else:
@@ -27,10 +28,11 @@ class TensorSquared(UniTensorOperation):
     def execute(self):
         return np.square(self._a)
 
-    def vector_jacobian_product(self):
+    def vector_jacobian_product(self, func):
         a = self._a
 
         def a_vjp(g):
+            g = func(g)
             return g * 2 * a
 
         return a_vjp

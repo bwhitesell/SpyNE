@@ -2,10 +2,10 @@ import numpy as np
 
 from operations.base import UniTensorOperation, DualTensorOperation
 from variables.variables import Tensor
-from .utils import basis_vectors
+from .utils import basis_vectors, _is_tensor
 
 
-class Gradient:
+class ComputationGraph:
     var_internal_shapes = {}
     partials = {}
     _partials = {}
@@ -19,8 +19,7 @@ class Gradient:
     @property
     def jacobians(self):
         jac = {}
-        vjps = self.build_vjps()
-
+        vjps = self._build_vjps()
         for node, vjp in vjps.items():
             g = [vjp(b) for b in basis_vectors(self.var)]
             jac[node] = np.reshape(
@@ -30,35 +29,34 @@ class Gradient:
 
         return jac
 
-    def build_vjps(self):
-        _partials = {}
+    def _build_vjps(self):
+        self._partials = {
+            self.var.node_uid: lambda g: g
+        }
         vjps = {}
         for node in self.nodes:
+
+            node_vjp = self._partials[node.node_uid]
             self.var_internal_shapes[node.node_uid] = node.shape
 
             if issubclass(node.__class__, UniTensorOperation):
-                self.nodes.append(node.a)
-                g_a = node.vector_jacobian_product()
-
-                if node.a not in _partials:
-                    _partials[node.a.node_uid] = g_a
-                else:
-                    _partials[node.a.node_uid] = lambda g: g_a(g) + _partials[node.a.node_uid](g)
+                g_a = node.vector_jacobian_product(node_vjp)
+                self._add_node(node.a, g_a)
 
             elif issubclass(node.__class__, DualTensorOperation):
-                self.nodes.append(node.a)
-                self.nodes.append(node.b)
-                g_a, g_b = node.vector_jacobian_product()
-                if node.a not in _partials:
-                    _partials[node.a.node_uid] = g_a
-                else:
-                    _partials[node.a.node_uid] = lambda g: g_a(g) + _partials[node.a.node_uid](g)
-                if node.b not in _partials:
-                    _partials[node.b.node_uid] = g_b
-                else:
-                    _partials[node.b.node_uid] = lambda g: g_b(g) + _partials[node.b.node_uid](g)
+                g_a, g_b = node.vector_jacobian_product(node_vjp)
+
+                self._add_node(node.a, g_a)
+                self._add_node(node.b, g_b)
 
             elif issubclass(node.__class__, Tensor):
-                vjps[node.node_uid] = _partials[node.node_uid]
+                vjps[node.node_uid] = self._partials[node.node_uid]
 
         return vjps
+
+    def _add_node(self, node, vjp):
+        self.nodes.append(node)
+        if node not in self._partials:
+            self._partials[node.node_uid] = vjp
+        else:
+            self._partials[node.node_uid] = lambda x: vjp(x) + self._partials[node.node_uid](x)
