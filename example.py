@@ -1,12 +1,21 @@
 import numpy as np
 
 from operations.arithmetic import TensorMultiply, TensorAddition
-from operations.activations import TensorSigmoid
+from operations.activations import TensorReLU
 from variables.variables import Tensor, TensorConst
-from differentiation.derivatives import ComputationGraph
+from differentiation.derivatives import BackwardsPass
 
 
-def compute(x):
+def neural_network(x):
+    """
+    An example of the models that can be built with SpyNE's Automatic
+    Differentiation. Specifically, this is a fully connected artificial
+    neural network with one hidden layer. S2 is calculated through the
+    forward pass, then the BackwardsPass class executes the backwards
+    pass. Notice we get the jacobian of all variables returned which can
+    be used to optimize the model parameters w1, b1, w2, b2.
+    """
+
     a = TensorConst(x, name='x')
 
     # fully connected layer 1
@@ -14,17 +23,17 @@ def compute(x):
     b1 = Tensor(np.random.random((50,)), name='b1')
     v1 = TensorMultiply(a, w1)
     a1 = TensorAddition(v1, b1)
-    s1 = TensorSigmoid(a1)
+    s1 = TensorReLU(a1)
 
     # fully connected layer 2
     w2 = Tensor(np.random.random((50,)), name='w2')
-    e2 = TensorAddition(w2, b1)
-    v2 = TensorMultiply(s1, e2)
-    a2 = TensorAddition(v2, b1)
-    s2 = TensorSigmoid(a2)
+    b2 = Tensor(np.random.random((1,)), name='b2')
+    v2 = TensorMultiply(s1, w2)
+    s2 = TensorReLU(v2)
 
-    return s2, ComputationGraph(s2).jacobians['b1']
+    return s2, BackwardsPass(s2).jacobians['w1']
+
 
 print(
-    compute(np.random.random((50,)))
+    neural_network(np.random.random((50,)))
 )

@@ -5,7 +5,7 @@ from variables.variables import Tensor
 from .utils import basis_vectors, _is_tensor
 
 
-class ComputationGraph:
+class BackwardsPass:
     var_internal_shapes = {}
     partials = {}
     _partials = {}
@@ -15,12 +15,12 @@ class ComputationGraph:
         self.ind_vars = []
         self.nodes = [self.var]
         self.jac_external_shape = self.var.shape
+        self.vjps = self._build_vjps()
 
     @property
     def jacobians(self):
         jac = {}
-        vjps = self._build_vjps()
-        for node, vjp in vjps.items():
+        for node, vjp in self.vjps.items():
             g = [vjp(b) for b in basis_vectors(self.var)]
             jac[node] = np.reshape(
                 g,

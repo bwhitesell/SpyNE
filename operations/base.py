@@ -70,6 +70,6 @@ class DualTensorOperation(BaseOperation):
 
     def _check_types(self, a, b):
         if (not self.is_tensor(a) and not self.is_operation(a)) or (not self.is_tensor(b)
-                                                                   and not self.is_operation(b)):
+                                                                    and not self.is_operation(b)):
             raise ValueError(f"""Invalid types, {self.name} is an operation 
                              between two tensors of at least dimension 1""")
