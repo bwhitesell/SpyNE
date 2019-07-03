@@ -1,7 +1,7 @@
 import numpy as np
 
-from operations.base import UniTensorOperation, DualTensorOperation
-from variables.variables import Tensor
+from ..operations.base import UniTensorOperation, DualTensorOperation
+from ..variables.variables import Tensor
 from .utils import basis_vectors, _is_tensor
 
 
