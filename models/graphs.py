@@ -11,7 +11,7 @@ class NeuralNetwork:
     layers = []
     response = None
     loss = 'mse'
-    learning_rate = .01
+    learning_rate = .0003
 
     def add_layer(self, layer):
         self.layers.append(layer)
@@ -22,29 +22,21 @@ class NeuralNetwork:
             error_sq = TensorSquared(error)
         return TensorSum(error_sq)
 
-    def _forwards_pass(self, x):
+    def _forward_pass(self, x):
         impulse = x
         for layer in self.layers:
             impulse = layer.feed(impulse)
 
         return impulse
 
-    def _backwards_pass(self, loss):
+    def _backward_pass(self, loss):
         self.gradient = BackwardsPass(loss).jacobians(update=True, alpha=self.learning_rate)
 
     def _learn_row(self, x, y):
         y_hat = self._forward_pass(x)
         loss = self.loss_function(y, y_hat)
-        self._backwards_pass(loss)
-
-
-
-
-
-
-
-
-
+        self._backward_pass(loss)
+        print(y_hat)
 
 
 class FullyConnectedLayer:
@@ -53,18 +45,21 @@ class FullyConnectedLayer:
     def __init__(self, x, neurons, activation='ReLU'):
         self.input_shape = x.shape
         self.neurons = neurons
-        self.activation = activations(activation)
+        self.activation = activation
         self.w_shape = self._get_weights_shape(x)
+        self.w = Tensor(np.random.normal(0, 1, self.w_shape))
+        self.m = TensorMultiply(x, self.w)
+        self.b = Tensor(np.random.random(self.m.shape))
         self.feed(x)
 
     def feed(self, x):
         self._check_input(x)
-        self.w = Tensor(np.random.random(self.w_shape))
         self.m = TensorMultiply(x, self.w)
-        self.b = Tensor(np.random.random(self.m.shape))
         self.z = TensorAddition(self.m, self.b)
-        self.a = TensorReLU(self.z)
-
+        if self.activation == 'ReLU':
+            self.a = TensorReLU(self.z)
+        else:
+            self.a = self.z
         return self.a
 
     def _get_weights_shape(self, x):
@@ -85,5 +80,6 @@ class FullyConnectedLayer:
 def activations(x):
     if x == 'ReLU':
         return TensorReLU
+
 
 

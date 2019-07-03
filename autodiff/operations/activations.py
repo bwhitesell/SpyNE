@@ -1,7 +1,7 @@
 import numpy as np
 
-from .base import UniTensorOperation
-from .utils import nest_func
+from autodiff.operations.base import UniTensorOperation
+from autodiff.operations.utils import nest_func
 
 
 class TensorReLU(UniTensorOperation):

@@ -1,8 +1,8 @@
 import numpy as np
 
-from operations.base import UniTensorOperation, DualTensorOperation
-from variables.variables import Tensor
-from .utils import basis_vectors, _is_tensor
+from autodiff.operations.base import UniTensorOperation, DualTensorOperation
+from autodiff.variables.variables import Tensor
+from autodiff.differentiation.utils import basis_vectors, _is_tensor
 
 
 class BackwardsPass:
@@ -23,12 +23,10 @@ class BackwardsPass:
             g = [node[1](b) for b in basis_vectors(self.var)]
             jac[node_uid] = np.reshape(
                 g,
-                self.jac_external_shape + self.var_internal_shapes[node_uid]
+                self.jac_external_shape + node[0].shape
             )
             if update:
                 node[0].value += jac[node_uid] * alpha
-
-
         return jac
 
     def _build_vjps(self):
