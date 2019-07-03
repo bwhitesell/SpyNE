@@ -1,23 +1,47 @@
 import numpy as np
 
-from autodiff.variables.variables import Tensor
+from autodiff.differentiation.derivatives import BackwardsPass
 from autodiff.operations.activations import TensorReLU
-from autodiff.operations.arithmetic import TensorMultiply, TensorAddition
+from autodiff.operations.arithmetic import TensorMultiply, TensorAddition, TensorSubtraction
+from autodiff.operations.elements import TensorSquared, TensorSum
+from autodiff.variables.variables import Tensor
 
 
 class NeuralNetwork:
     layers = []
     response = None
+    loss = 'mse'
+    learning_rate = .01
 
     def add_layer(self, layer):
         self.layers.append(layer)
 
-    def forward(self, x):
+    def loss_function(self, y_hat, y):
+        error = TensorSubtraction(y, y_hat)
+        if self.loss == 'mse':
+            error_sq = TensorSquared(error)
+        return TensorSum(error_sq)
+
+    def _forwards_pass(self, x):
         impulse = x
         for layer in self.layers:
             impulse = layer.feed(impulse)
 
-        self.response = impulse
+        return impulse
+
+    def _backwards_pass(self, loss):
+        self.gradient = BackwardsPass(loss).jacobians(update=True, alpha=self.learning_rate)
+
+    def _learn_row(self, x, y):
+        y_hat = self._forward_pass(x)
+        loss = self.loss_function(y, y_hat)
+        self._backwards_pass(loss)
+
+
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 import numpy as np
 
-from ..operations.base import UniTensorOperation, DualTensorOperation
-from ..variables.variables import Tensor
+from operations.base import UniTensorOperation, DualTensorOperation
+from variables.variables import Tensor
 from .utils import basis_vectors, _is_tensor
 
 
@@ -17,15 +17,17 @@ class BackwardsPass:
         self.jac_external_shape = self.var.shape
         self.vjps = self._build_vjps()
 
-    @property
-    def jacobians(self):
+    def jacobians(self, update=False, alpha=.01):
         jac = {}
-        for node, vjp in self.vjps.items():
-            g = [vjp(b) for b in basis_vectors(self.var)]
-            jac[node] = np.reshape(
+        for node_uid, node in self.vjps.items():
+            g = [node[1](b) for b in basis_vectors(self.var)]
+            jac[node_uid] = np.reshape(
                 g,
-                self.jac_external_shape + self.var_internal_shapes[node]
+                self.jac_external_shape + self.var_internal_shapes[node_uid]
             )
+            if update:
+                node[0].value += jac[node_uid] * alpha
+
 
         return jac
 
@@ -50,7 +52,7 @@ class BackwardsPass:
                 self._add_node(node.b, g_b)
 
             elif issubclass(node.__class__, Tensor):
-                vjps[node.node_uid] = self._partials[node.node_uid]
+                vjps[node.node_uid] = (node, self._partials[node.node_uid])
 
         return vjps
 

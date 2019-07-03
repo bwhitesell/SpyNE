@@ -3,7 +3,7 @@ import numpy as np
 from operations.arithmetic import TensorMultiply, TensorAddition
 from operations.activations import TensorReLU
 from variables.variables import Tensor, TensorConst
-from autodiff.derivatives import BackwardsPass
+from differentiation.derivatives import BackwardsPass
 
 
 def neural_network(x):
@@ -31,7 +31,7 @@ def neural_network(x):
     v2 = TensorMultiply(s1, w2)
     s2 = TensorReLU(v2)
 
-    return s2, BackwardsPass(s2).jacobians['w1']
+    return s2, BackwardsPass(s2).jacobians(update=True)
 
 
 print(

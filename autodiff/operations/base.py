@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..variables.variables import Tensor, TensorConst
+from variables.variables import Tensor, TensorConst
 
 
 class BaseOperation:
