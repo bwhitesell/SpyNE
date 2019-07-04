@@ -3,25 +3,26 @@ import numpy as np
 from models.graphs import NeuralNetwork, FullyConnectedLayer
 from autodiff.variables.variables import Tensor, TensorConst
 
+x = np.array([[.1, .5, 3, 2, 2, 5, 4],
+              [.1, .5, 3, 2, 2, 5, 4],
+              [.1, .5, 3, 2, 2, 5, 4],
+              [.1, .5, 3, 2, 2, 5, 4]])
+y = np.array([[500],
+              [500],
+              [500],
+              [500]])
+
 
 nn = NeuralNetwork()
+nn.add_layer(FullyConnectedLayer(neurons=500, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=100, activation='sigmoid'))
 nn.add_layer(FullyConnectedLayer(neurons=50, activation='relu'))
-nn.add_layer(FullyConnectedLayer(neurons=25, activation='sigmoid'))
-nn.add_layer(FullyConnectedLayer(neurons=10, activation='relu'))
-nn.add_layer(FullyConnectedLayer(neurons=5, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=25, activation='relu'))
 nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 
 
-
-
-x = TensorConst([.1, .5, 3, 2, 2, 5, 4])
-y = TensorConst([500])
-
-nn._setup_layers(x)
-
 print('Learning relationship...')
-for i in range(100):
-    print('----- Pass -----')
-    nn._learn_iter(x, y)
+
+nn.fit(x, y, batch_size=4, epochs=100)
 
 

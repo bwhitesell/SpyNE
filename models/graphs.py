@@ -18,17 +18,39 @@ class NeuralNetwork:
     def add_layer(self, layer):
         self.layers.append(layer)
 
-    def fit(self, x, y, batch_size=1):
-        self._setup_layers(x)
-        batch_grad = {}
+    def fit(self, x, y, batch_size=1, epochs=1):
+        self._setup_layers(Tensor(x[0]))
+        n_batches = int(x.shape[0]/batch_size)
+        for epoch in range(epochs):
+            for batch in range(n_batches):
+                batch_grad = {}
+                batch_loss = 0
+                start_splice = batch * batch_size
+                end_splice = (batch + 1) * batch_size
 
-        for itr in range(batch_size):
-            grad = self._learn_iter(x[itr, ...], y[itr, ...])
-            for var in grad:
-                batch_grad[var] += grad[var]
+                x_batch = x[start_splice:end_splice, ...]
+                y_batch = y[start_splice:end_splice, ...]
 
-        for var in grad:
-            grad[var] = grad[var] / batch_size
+                for elem in range(batch_size):
+                    # forward pass
+                    y_hat = self._forward_pass(Tensor(x_batch[elem, ...]))
+                    loss = self.loss_function(Tensor(y_batch[elem, ...]), y_hat)
+                    batch_loss += loss.value
+                    # backwards pass
+                    grad = BackwardsPass(loss).jacobians()
+                    for var in grad:
+                        if var not in batch_grad:
+                            batch_grad[var] = grad[var]
+                        else:
+                            batch_grad[var] += grad[var]
+
+                for var in grad:
+                    grad[var] = grad[var] / batch_size
+
+                self._update(grad)
+                print(f'Batch: {batch}')
+                print(f'Batch Loss: {batch_loss / batch_size}')
+
 
     def _setup_layers(self, x):
         self.vars = {}
@@ -38,7 +60,7 @@ class NeuralNetwork:
             for var_uid, var in layer.variables.items():
                 self.vars[var_uid] = var
 
-    def loss_function(self, y_hat, y):
+    def loss_function(self, y, y_hat):
         error = TensorSubtraction(y, y_hat)
         if self.loss == 'mse':
             error_sq = TensorSquared(error)
@@ -50,16 +72,9 @@ class NeuralNetwork:
             impulse = layer.feed(impulse)
         return impulse
 
-    def _learn_iter(self, x, y):
-        y_hat = self._forward_pass(x)
-        loss = self.loss_function(y, y_hat)
-        gradient = BackwardsPass(loss).jacobians()
-        self._update(gradient)
-        print(y_hat)
-
     def _update(self, gradient):
-        for var_uid in gradient:
-            self.vars[var_uid].value += gradient[var_uid] * self.learning_rate
+        for var_uid in self.vars:
+            self.vars[var_uid].value -= gradient[var_uid] * self.learning_rate
 
 
 class FullyConnectedLayer:
