@@ -27,7 +27,7 @@ class TensorSubtraction(DualTensorOperation):
     name = 'Tensor Subtraction'
 
     def execute(self):
-        return np.add(self._a, self._b)
+        return np.subtract(self._a, self._b)
 
     @staticmethod
     def vector_jacobian_product(func=lambda g: g):
