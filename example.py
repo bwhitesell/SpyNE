@@ -3,18 +3,25 @@ import numpy as np
 from models.graphs import NeuralNetwork, FullyConnectedLayer
 from autodiff.variables.variables import Tensor, TensorConst
 
-x = Tensor([.1, .5, 3, 2, 2, 5, 4])
 
 nn = NeuralNetwork()
-nn.add_layer(FullyConnectedLayer(neurons=5, activation='linear'))
+nn.add_layer(FullyConnectedLayer(neurons=50, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=25, activation='sigmoid'))
+nn.add_layer(FullyConnectedLayer(neurons=10, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=5, activation='relu'))
 nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 
 
-y = TensorConst([1250])
+
+
+x = TensorConst([.1, .5, 3, 2, 2, 5, 4])
+y = TensorConst([500])
+
+nn._setup_layers(x)
 
 print('Learning relationship...')
 for i in range(100):
     print('----- Pass -----')
-    nn._learn_row(x, y)
+    nn._learn_iter(x, y)
 
 
