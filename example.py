@@ -14,15 +14,15 @@ y = np.array([[500],
 
 
 nn = NeuralNetwork()
+nn.add_layer(FullyConnectedLayer(neurons=5000, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=2500, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=1000, activation='relu'))
 nn.add_layer(FullyConnectedLayer(neurons=500, activation='relu'))
-nn.add_layer(FullyConnectedLayer(neurons=100, activation='sigmoid'))
-nn.add_layer(FullyConnectedLayer(neurons=50, activation='relu'))
-nn.add_layer(FullyConnectedLayer(neurons=25, activation='relu'))
 nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 
 
 print('Learning relationship...')
 
-nn.fit(x, y, batch_size=4, epochs=100)
+nn.fit(x, y, batch_size=4, epochs=10)
 
 
