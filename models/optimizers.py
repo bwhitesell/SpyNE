@@ -1,18 +1,22 @@
 from autodiff.differentiation.derivatives import BackwardsPass
-from autodiff.operations.arithmetic import TensorSubtraction
-from autodiff.operations.elements import TensorSquared, TensorSum
 from autodiff.variables.variables import Tensor
+
+from .losses import LOSSES
 
 
 class BaseOptimizer:
     loss = None
 
-    def __init__(self, loss):
-        self.loss = loss
+    def __init__(self, loss, learning_rate):
+        loss_func = LOSSES[loss]
+        self.loss = loss_func
+        self.learning_rate = learning_rate
 
     def optimize(self, nn, x, y, batch_size, epochs):
         n_batches = int(x.shape[0] / batch_size)
         for epoch in range(epochs):
+            print('-------------------')
+            print(f'Epoch: {epoch}')
             for batch in range(n_batches):
                 batch_grad = {}
                 batch_loss = 0
@@ -46,28 +50,38 @@ class BaseOptimizer:
         pass
 
 
-class SGDOptimizer:
-    updates = {}
-    learning_rate = .001
-
-    def __init__(self, learning_rate, *args):
-        super().__init__(*args)
-        self.learning_rate = learning_rate
+class SGDOptimizer(BaseOptimizer):
 
     def _update(self, nn, gradient):
         for var_uid in nn.vars:
             nn.vars[var_uid].value -= gradient[var_uid] * self.learning_rate
 
 
-class MomentumOptimizer:
+class MomentumOptimizer(BaseOptimizer):
+    beta = 0
+    m = {}
+
+    def __init__(self, loss, learning_rate, beta=0.9):
+        super().__init__(loss, learning_rate)
+        self.beta = beta
+
+    def _update(self, nn, gradient):
+        for var_uid in nn.vars:
+            if var_uid in self.m:
+                self.m[var_uid] = self.beta * self.m[var_uid] - self.learning_rate * gradient[var_uid]
+            else:
+                self.m[var_uid] = -self.learning_rate * gradient[var_uid]
+
+            nn.vars[var_uid].value += self.m[var_uid]
+
+
+
+
+class RMSPropOptimizer(BaseOptimizer):
     pass
 
 
-class RMSPropOptimizer:
-    pass
-
-
-class AdamOptimizer:
+class AdamOptimizer(BaseOptimizer):
     pass
 
 
