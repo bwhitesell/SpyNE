@@ -18,11 +18,7 @@ class NeuralNetwork:
             self._setup_layers(Tensor(x[0]))
             self.setup = True
         self.l2 = l2
-        def loss_fn(y, y_hat):
-            ls = LOSSES[loss](y, y_hat)
-            e = TensorAddition(ls, self.l2_loss())
-            return e
-        optimizer = OPTIMIZERS[optimizer](loss_fn, learning_rate)
+        optimizer = OPTIMIZERS[optimizer](self._build_loss_function(loss), learning_rate)
         optimizer.optimize(self, x, y, batch_size, epochs)
 
     def predict(self, x):
@@ -46,6 +42,13 @@ class NeuralNetwork:
             else:
                 weights_mag = weights
         return ElemwiseMultiply(TensorConst([self.l2]), weights_mag)
+
+    def _build_loss_function(self, loss):
+        def loss_function(y, y_hat):
+            spec_loss = LOSSES[loss](y, y_hat)
+            l2_comp = self.l2_loss()
+            return TensorAddition(spec_loss, l2_comp)
+        return loss_function
 
     def _setup_layers(self, x):
         self.vars = {}
