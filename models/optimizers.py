@@ -3,15 +3,12 @@ import numpy as np
 from autodiff.differentiation.derivatives import BackwardsPass
 from autodiff.variables.variables import Tensor
 
-from .losses import LOSSES
-
 
 class BaseOptimizer:
     loss = None
 
     def __init__(self, loss, learning_rate):
-        loss_func = LOSSES[loss]
-        self.loss = loss_func
+        self.loss = loss
         self.learning_rate = learning_rate
 
     def optimize(self, nn, x, y, batch_size, epochs):

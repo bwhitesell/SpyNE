@@ -15,6 +15,6 @@ nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 
 print('Learning relationship...')
 
-nn.fit(x, y, batch_size=1000, epochs=5, learning_rate=.5, optimizer='adam')
+nn.fit(x, y, batch_size=1000, epochs=5, learning_rate=.1, optimizer='sgd', l2=500)
 
 

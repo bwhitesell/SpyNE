@@ -83,3 +83,24 @@ class TensorMultiply(DualTensorOperation):
                 return g * a
 
         return a_vjp, b_vjp
+
+
+class ElemwiseMultiply(DualTensorOperation):
+    name = 'ElemWise Multiplication'
+
+    def execute(self):
+        return np.multiply(self._a, self._b)[0]
+
+    def vector_jacobian_product(self, func=lambda g: g):
+        a = self._a
+        b = self._b
+
+        @nest_func(func)
+        def a_vjp(g):
+            return np.multiply(g, b)
+
+        @nest_func(func)
+        def b_vjp(g):
+            return np.multiply(g, a)
+
+        return a_vjp, b_vjp

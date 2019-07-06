@@ -15,7 +15,7 @@ class TensorSum(UniTensorOperation):
 
         @nest_func(func)
         def a_vjp(g):
-            if g.shape == ():
+            if g.shape == () or g.shape == (1,):
                 return g * np.ones(internal_shape)
             else:
                 raise NotImplementedError('''the VJP builder for TensorSum can only handle 
