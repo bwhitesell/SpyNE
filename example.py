@@ -4,8 +4,8 @@ from sklearn.datasets import load_boston
 from sklearn.preprocessing import StandardScaler
 boston = load_boston()
 
-from models.graphs import NeuralNetwork
-from layers import FullyConnectedLayer
+from spyne.models import NeuralNetwork
+from spyne.layers import FullyConnectedLayer
 
 
 # set seed

@@ -1,7 +1,7 @@
 import numpy as np
 
-from SpyNE.autodiff.differentiation.derivatives import BackwardsPass
-from SpyNE.autodiff.variables.variables import Tensor
+from spyne.autodiff.differentiation.derivatives import BackwardsPass
+from spyne.autodiff.variables.variables import Tensor
 
 
 class BaseOptimizer:

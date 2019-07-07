@@ -8,7 +8,7 @@ from .differentiation.derivatives import BackwardsPass
 
 def neural_network(x):
     """
-    An example of the models that can be built with SpyNE's Automatic
+    An example of the models that can be built with spyne's Automatic
     Differentiation. Specifically, this is a fully connected artificial
     neural network with one hidden layer. S2 is calculated through the
     forward pass, then the BackwardsPass class executes the backwards

@@ -1,7 +1,7 @@
 import numpy as np
 
-from SpyNE.autodiff.operations.arithmetic import TensorMultiply, TensorAddition
-from SpyNE.autodiff.variables.variables import Tensor
+from spyne.autodiff.operations.arithmetic import TensorMultiply, TensorAddition
+from spyne.autodiff.variables.variables import Tensor
 
 from .constants import ACTIVATIONS
 
