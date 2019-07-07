@@ -41,4 +41,5 @@ In Development
     
 Not Implemented
 - Recurrent Layers (LSTM)
+- GPU support (Probably through CuPy)
 ```
