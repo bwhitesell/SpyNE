@@ -13,7 +13,7 @@ class NeuralNetwork:
     vars = {}
     l2 = 0
 
-    def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.001, l2=0):
+    def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.01, l2=0):
         if not self.setup:
             self._setup_layers(Tensor(x[0]))
             self.setup = True

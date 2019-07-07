@@ -10,24 +10,39 @@ class FullyConnectedLayer:
     w = m = b = z = a = None
     input_shape = w_shape = None
     variables = {}
+    weights_shape = products_shape = ()
 
-    def __init__(self, neurons, activation='relu'):
+    def __init__(self, neurons, activation='relu', dropout=0):
         self.neurons = neurons
         self.activation = ACTIVATIONS[activation]
+        self.dropout = dropout
 
     def setup(self, x):
         self.variables = {}
         self.input_shape = x.shape
+        self.weights_shape = self._get_weights_shape(x)
+        self.products_shape = self._get_product_shape(x)
 
-        self.w = self._add_var(np.random.normal(0, 1, self._get_weights_shape(x)))
-        self.b = self._add_var(np.random.random(self._get_product_shape(x)))
+        # xavier initialization
+        r = np.sqrt(6/(sum(self.input_shape) + sum(self.products_shape)))
+        self.w = self._add_var(np.random.uniform(-r, r, self.weights_shape))
+        self.b = self._add_var(np.random.random(self.products_shape))
 
     def feed(self, x):
         self._check_input(x)
         self.m = TensorMultiply(x, self.w)
         self.z = TensorAddition(self.m, self.b)
         self.a = self.activation(self.z)
+        if self.dropout > 0:
+            self.a.value = self._dropout(self.a.value)
         return self.a
+
+    def _dropout(self, a):
+        n_drops = np.random.binomial(a.size, self.dropout)
+        indices = np.random.choice(np.arange(a.shape[0]), replace=False,
+                                   size=n_drops)
+        a[indices] = 0
+        return a
 
     def _get_weights_shape(self, x):
         n_dims = len(x.shape)

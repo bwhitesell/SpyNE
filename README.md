@@ -6,13 +6,13 @@
 SpyNE is a minimalist deep learning famework written 
 "purely" in python. 
 
-It's simplicty makes it an excellent
-learning and prototyping tool.
+It's simplicty makes it an excellent tool to learn 
+the mathematical framework behind deep learning.
 
 SpyNE features a dead-simple api, super readable code,
 no dependencies (other than numpy), eager execution by 
-default and an accesible but detailed explanation of the underlying 
-mathematical framework.
+default and an accessible but exhaustive explanation of the 
+underlying mathematical framework.
 
 #### Modules
 SpyNE features custom implementations of the following:
@@ -28,14 +28,16 @@ learning frameworks.
 #### Project Status
 ```
 Completed
-- Auto Diff (Reverse Mode)
-
+- Reverse Mode Auto Diff
+- Neural Net API
+- SGD/Adam Optimization
+- L2 Regularization
+- Fully Connected Layers
 
 In Development
+- Dropout
+- Convolutional Layers (2d / 1d)
     
 Not Implemented
-- Optimization Engines
-- Neural API
-
-
+- Recurrent Layers (LSTM)
 ```
