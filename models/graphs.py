@@ -13,13 +13,14 @@ class NeuralNetwork:
     vars = {}
     l2 = 0
 
-    def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.01, l2=0):
+    def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.01, l2=0,
+            early_stopping=True):
         if not self.setup:
             self._setup_layers(Tensor(x[0]))
             self.setup = True
         self.l2 = l2
         optimizer = OPTIMIZERS[optimizer](self._build_loss_function(loss), learning_rate)
-        optimizer.optimize(self, x, y, batch_size, epochs)
+        optimizer.optimize(self, x, y, batch_size, epochs, early_stopping=early_stopping)
 
     def predict(self, x):
         return self.forward_pass(self, Tensor(x))
@@ -42,6 +43,19 @@ class NeuralNetwork:
             else:
                 weights_mag = weights
         return ElemwiseMultiply(TensorConst([self.l2]), weights_mag)
+
+    @property
+    def n_layers(self):
+        return len(self.layers)
+
+    @property
+    def n_parameters(self):
+        n_params = 0
+        if not self.setup:
+            raise AttributeError('NN has not been setup yet. Try setting up with model with the fit method first.')
+        for var in self.vars:
+            n_params += self.vars[var].value.size
+        return n_params
 
     def _build_loss_function(self, loss):
         def loss_function(y, y_hat):

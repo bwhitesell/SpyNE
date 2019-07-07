@@ -3,25 +3,23 @@ import numpy as np
 from autodiff.differentiation.derivatives import BackwardsPass
 from autodiff.variables.variables import Tensor
 
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
-
 
 class BaseOptimizer:
+    name = 'Base Optimizer'
     loss = None
 
     def __init__(self, loss, learning_rate):
         self.loss = loss
         self.learning_rate = learning_rate
+        self.print_iter = 0
 
-    def optimize(self, nn, x, y, batch_size, epochs):
+    def optimize(self, nn, x, y, batch_size, epochs, early_stopping):
+        self._print_optimization_message(nn)
         x_train, x_test, y_train, y_test = self._train_val_split(x, y)
 
         n_batches = int(x_train.shape[0] / batch_size)
         for epoch in range(epochs):
             x_train, y_train = self._shuffle(x_train, y_train)
-            print('-------------------')
-            print(f'Epoch: {epoch}')
             for batch in range(n_batches):
                 batch_grad = {}
                 start_splice = batch * batch_size
@@ -34,6 +32,7 @@ class BaseOptimizer:
                     # forward pass
                     y_hat = nn.forward_pass(Tensor(x_batch[elem, ...]))
                     loss = self.loss(Tensor(y_batch[elem, ...]), y_hat)
+
                     # backwards pass
                     grad = BackwardsPass(loss).jacobians()
                     for var in grad:
@@ -45,16 +44,22 @@ class BaseOptimizer:
                 for var in grad:
                     grad[var] = grad[var] / batch_size
 
+                # update w/ optimization alg
                 self._update(nn, grad)
-            lr = LinearRegression()
-            lr.fit(x_train, y_train)
-            y_lr_est = lr.predict(x_test)
-
-            print(f'Epoch {epoch} linear_reg val-set loss: {mean_squared_error(y_test, y_lr_est)}')
+                # control outputs
+                self._handle_prints(epoch, batch, n_batches)
+            # eval performance
             train_loss = self._eval_perf(x_train, y_train, nn)
             validation_loss = self._eval_perf(x_test, y_test, nn)
-            print(f'Epoch {epoch} train-set loss: {train_loss}')
-            print(f'Epoch {epoch} val-set loss: {validation_loss}')
+
+            # early stopping
+            if early_stopping and epoch > 0:
+                if validation_loss > lst_epch_val_loss:
+                    self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss)
+                    break
+            lst_epch_val_loss = validation_loss
+
+            self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss)
 
     @staticmethod
     def _train_val_split(x, y, split_size=.8):
@@ -81,11 +86,26 @@ class BaseOptimizer:
             loss += self.loss(Tensor([y[t]]), y_hat).value
         return loss / n_evals
 
+    def _print_optimization_message(self, nn):
+        print('----------------------')
+        print('Neural Network Architecture')
+        print(f'Layers: {nn.n_layers}')
+        print(f'Params: {nn.n_parameters} parameters')
+        print(f'Using optimizer: {self.name}')
+        print('\n')
+
+    def _handle_prints(self, epoch, batch, n_batches, train_loss=0, val_loss=0):
+        end = '\n' if (train_loss != 0 or val_loss != 0) else '\r'
+        print(f'Batch {batch + 1}/{n_batches}, {round((batch + 1)/n_batches * 100, 4)}% for '
+              + f'epoch {epoch}:  Train Loss: {round(train_loss, 4)} | Val Loss: {round(val_loss, 4)}', end=end)
+        self.print_iter += 1
+
     def _update(self, nn, grad):
         pass
 
 
 class SGDOptimizer(BaseOptimizer):
+    name = 'Stochastic Gradient Descent Optimizer'
 
     def _update(self, nn, gradient):
         for var_uid in nn.vars:
@@ -93,6 +113,8 @@ class SGDOptimizer(BaseOptimizer):
 
 
 class MomentumOptimizer(BaseOptimizer):
+    name = 'Momentum Optimizer'
+
     beta = 0
     m = {}
 
@@ -111,6 +133,8 @@ class MomentumOptimizer(BaseOptimizer):
 
 
 class RMSPropOptimizer(BaseOptimizer):
+    name = 'RMSProp Optimizer'
+
     m = {}
 
     def __init__(self, loss, learning_rate, beta=0.9, epsilon=1e-10):
@@ -129,42 +153,8 @@ class RMSPropOptimizer(BaseOptimizer):
             nn.vars[var_uid].value += - self.learning_rate * jv / np.sqrt(self.m[var_uid] + self.epsilon)
 
 
-class AdamOptimizer(BaseOptimizer):
-    m = {}
-    s = {}
-
-    def __init__(self, loss, learning_rate, beta_1=0.9,  beta_2=0.999, epsilon=1e-10):
-        super().__init__(loss, learning_rate)
-        self.beta_1 = beta_1
-        self.beta_2 = beta_2
-        self.epsilon = epsilon
-        self.n_iter = 1
-        self.m = {}
-        self.s = {}
-
-    def _update(self, nn, gradient):
-        for var_uid in nn.vars:
-            jv = self.learning_rate * gradient[var_uid]
-            if var_uid in self.m:
-                self.m[var_uid] = self.beta_1 * self.m[var_uid] - (1 - self.beta_1) * jv
-            else:
-                self.m[var_uid] = (1 - self.beta_1) * jv
-
-            if var_uid in self.s:
-                self.s[var_uid] = self.beta_2 * self.s[var_uid] + (1 - self.beta_2) * (jv * jv)
-            else:
-                self.s[var_uid] = (1 - self.beta_2) * (jv * jv)
-
-            self.m[var_uid] = self.m[var_uid] / (1 - self.beta_1**self.n_iter)
-            self.s[var_uid] = self.s[var_uid] / (1 - self.beta_2 ** self.n_iter)
-
-            nn.vars[var_uid].value += np.divide(self.learning_rate * self.m[var_uid],np.sqrt(self.s[var_uid] + self.epsilon))
-
-
-
 OPTIMIZERS = {
     'sgd': SGDOptimizer,
     'momentum': MomentumOptimizer,
     'rmsprop': RMSPropOptimizer,
-    'adam': AdamOptimizer,
 }
