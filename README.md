@@ -7,7 +7,8 @@ SpyNE is a minimalist deep learning famework written
 "purely" in python. 
 
 It's simplicty makes it an excellent tool to learn 
-the mathematical framework behind deep learning.
+the mathematical framework behind deep learning and a
+strong alternative to tree-based ensembling.
 
 SpyNE features a dead-simple api, super readable code,
 no dependencies (other than numpy), eager execution by 
