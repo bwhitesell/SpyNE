@@ -34,9 +34,9 @@ Completed
 - SGD/Momentum/RMSProp Optimization
 - L2 Regularization
 - Fully Connected Layers
+- Dropout
 
 In Development
-- Dropout
 - Convolutional Layers (2d / 1d)
     
 Not Implemented
