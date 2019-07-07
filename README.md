@@ -31,7 +31,7 @@ learning frameworks.
 Completed
 - Reverse Mode Auto Diff
 - Neural Net API
-- SGD/Adam Optimization
+- SGD/Momentum/RMSProp Optimization
 - L2 Regularization
 - Fully Connected Layers
 
