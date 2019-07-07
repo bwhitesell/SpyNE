@@ -41,8 +41,8 @@ nn.add_layer(FullyConnectedLayer(neurons=5, activation='relu', dropout=0))
 nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 ```
 And that's it... we've defined a neural network architecture that has one 
-hidden layer of 5 neurons per feature-set and an ouput layer with a single 
-neuron (as is desired for a regression problem).
+hidden layer of 5 neurons per feature-axis and an ouput layer with a single 
+neuron per feature-axis (as is desired for a regression problem).
 
 
 
