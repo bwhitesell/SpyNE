@@ -1,17 +1,17 @@
 import numpy as np
 
-from sklearn.datasets import load_boston
-from sklearn.preprocessing import StandardScaler
-boston = load_boston()
-
 from spyne.models import NeuralNetwork
 from spyne.layers import FullyConnectedLayer
+
+from sklearn.datasets import load_boston
+from sklearn.preprocessing import StandardScaler
 
 
 # set seed
 np.random.seed(1)
 
-# standardize the data
+# load and standardize the data
+boston = load_boston()
 scaler = StandardScaler(with_mean=False)
 x = scaler.fit_transform(boston['data'])
 y = boston['target']
@@ -25,14 +25,6 @@ print('\n')
 print('Training a Multi-Layer-Perceptron...')
 # fit our nn
 nn.fit(x, y, batch_size=10, epochs=20, learning_rate=.09, optimizer='rmsprop', l2=0.0000001)
-
-
-# linear regression
-print('\n')
-print('Or a linear regression....')
-linear_model = NeuralNetwork()
-linear_model.add_layer(FullyConnectedLayer(neurons=1, activation='linear', dropout=0))
-linear_model.fit(x, y, batch_size=10, epochs=20, learning_rate=.005, optimizer='rmsprop', l2=0.0000001)
 
 
 
