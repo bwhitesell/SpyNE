@@ -1,8 +1,8 @@
 import numpy as np
 
-from autodiff.operations.base import UniTensorOperation, DualTensorOperation
-from autodiff.variables.variables import Tensor
-from autodiff.differentiation.utils import basis_vectors, _is_tensor
+from ..operations.base import UniTensorOperation, DualTensorOperation
+from ..variables.variables import Tensor
+from .utils import basis_vectors
 
 
 class BackwardsPass:

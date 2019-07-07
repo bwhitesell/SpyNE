@@ -1,7 +1,7 @@
 import numpy as np
 
-from autodiff.operations.base import DualTensorOperation
-from autodiff.operations.utils import nest_func
+from .base import DualTensorOperation
+from .utils import nest_func
 
 
 class TensorAddition(DualTensorOperation):

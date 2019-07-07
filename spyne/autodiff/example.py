@@ -1,9 +1,9 @@
 import numpy as np
 
-from operations.arithmetic import TensorMultiply, TensorAddition
-from operations.activations import TensorReLU
-from variables.variables import Tensor, TensorConst
-from differentiation.derivatives import BackwardsPass
+from .operations.arithmetic import TensorMultiply, TensorAddition
+from .operations.activations import TensorReLU
+from .variables.variables import Tensor, TensorConst
+from .differentiation.derivatives import BackwardsPass
 
 
 def neural_network(x):

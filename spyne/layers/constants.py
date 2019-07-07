@@ -1,4 +1,4 @@
-from autodiff.operations.activations import TensorReLU, TensorTanh, TensorSigmoid
+from SpyNE.autodiff.operations.activations import TensorReLU, TensorSigmoid
 
 
 ACTIVATIONS = {

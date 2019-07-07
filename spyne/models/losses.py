@@ -1,5 +1,5 @@
-from autodiff.operations.arithmetic import TensorSubtraction, TensorAddition
-from autodiff.operations.elements import TensorSquared, TensorSum
+from SpyNE.autodiff.operations.arithmetic import TensorSubtraction
+from SpyNE.autodiff.operations.elements import TensorSquared, TensorSum
 
 
 def mean_squared_error(y, y_hat):

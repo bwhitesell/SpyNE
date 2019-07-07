@@ -1,7 +1,7 @@
 import numpy as np
 
-from autodiff.operations.base import UniTensorOperation
-from autodiff.operations.utils import nest_func
+from .base import UniTensorOperation
+from .utils import nest_func
 
 
 class TensorSum(UniTensorOperation):
