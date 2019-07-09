@@ -14,7 +14,7 @@ class BackwardsPass:
         self.var = var
         self.ind_vars = []
         self.nodes = [self.var]
-        self.jac_external_shape = self.var.shape
+        self.jac_external_shape = self.var.shape if self.var.shape != (1,) else ()
         self.vjps = self._build_vjps()
 
     def jacobians(self, update=False, alpha=.01):

@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..variables.variables import Tensor, TensorConst
 
 
@@ -13,5 +15,13 @@ def nest_func(external_func):
 
         return wrapped_func
     return func_construction
+
+
+def one_hot_encode_categorical_target(y):
+    n_categories = np.unique(y).size
+    n_samples = y.size
+    y_adj = np.zeros((n_samples, n_categories))
+    y_adj[np.arange(n_samples), y] = 1
+    return y_adj
 
 

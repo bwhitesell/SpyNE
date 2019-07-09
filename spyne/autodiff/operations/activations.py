@@ -52,3 +52,22 @@ class TensorSigmoid(UniTensorOperation):
 
         return a_vjp
 
+
+class TensorSoftmax(UniTensorOperation):
+    name = 'Tensor Softmax'
+
+    def execute(self):
+        exp_sum = np.exp(self._a).sum()
+        return np.exp(self._a) / exp_sum
+
+    def vector_jacobian_product(self, func=lambda g: g):
+        a = self._a
+
+        @nest_func(func)
+        def a_vjp(g):
+            exp_sum = np.exp(a).sum()
+            num = np.multiply(np.exp(a), exp_sum) - np.exp(2 * a)
+            return np.multiply(g, num / np.square(exp_sum))
+
+        return a_vjp
+

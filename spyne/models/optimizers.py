@@ -94,10 +94,10 @@ class BaseOptimizer:
         print(f'Using optimizer: {self.name}')
         print('\n')
 
-    def _handle_prints(self, epoch, batch, n_batches, train_loss=0, val_loss=0):
+    def _handle_prints(self, epoch, batch, n_batches, train_loss=np.array([0]), val_loss=np.array([0])):
         end = '\n' if (train_loss != 0 or val_loss != 0) else '\r'
         print(f'Batch {batch + 1}/{n_batches}, {round((batch + 1)/n_batches * 100, 4)}% for '
-              + f'epoch {epoch}:  Train Loss: {round(train_loss, 4)} | Val Loss: {round(val_loss, 4)}', end=end)
+              + f'epoch {epoch}:  Train Loss: {round(train_loss[0], 4)} | Val Loss: {round(val_loss[0], 4)}', end=end)
         self.print_iter += 1
 
     def _update(self, nn, grad):

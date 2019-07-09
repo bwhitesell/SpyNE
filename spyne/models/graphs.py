@@ -1,5 +1,5 @@
 from spyne.autodiff.variables.variables import Tensor, TensorConst
-from spyne.autodiff.operations.arithmetic import TensorAddition, ElemwiseMultiply
+from spyne.autodiff.operations.arithmetic import TensorAddition, TensorElemMultiply
 from spyne.autodiff.operations.elements import TensorSquared, TensorSum
 
 from .optimizers import OPTIMIZERS
@@ -23,7 +23,7 @@ class NeuralNetwork:
         optimizer.optimize(self, x, y, batch_size, epochs, early_stopping=early_stopping)
 
     def predict(self, x):
-        return self.forward_pass(self, Tensor(x))
+        return [self.forward_pass(Tensor(i)) for i in x]
 
     def add_layer(self, layer):
         self.layers.append(layer)
@@ -42,7 +42,7 @@ class NeuralNetwork:
                 weights_mag = TensorAddition(weights_mag, weights)
             else:
                 weights_mag = weights
-        return ElemwiseMultiply(TensorConst([self.l2]), weights_mag)
+        return TensorElemMultiply(TensorConst([self.l2]), weights_mag)
 
     @property
     def n_layers(self):
