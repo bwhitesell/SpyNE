@@ -39,18 +39,18 @@ class TensorSquared(UniTensorOperation):
         return a_vjp
 
 
-class TensorAbsoluteValue(UniTensorOperation):
-    name = 'Tensor Absolute Value'
+class TensorNegLog(UniTensorOperation):
+    name = 'Tensor Element-Wise Negative Logarithm'
 
     def execute(self):
-        return np.abs(self._a)
+        return -1 * np.log(self._a)
 
     def vector_jacobian_product(self, func=lambda g: g):
         a = self._a
 
         @nest_func(func)
         def a_vjp(g):
-            return g * 2 * a
+            return -1 * g / a
 
         return a_vjp
 
