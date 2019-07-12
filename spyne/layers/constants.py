@@ -1,11 +1,11 @@
-from spyne.autodiff.operations.activations import TensorReLU, TensorSigmoid, TensorSoftmax
+from spyne.autodiff.operations.activations import TensorReLU, TensorSigmoid, TensorSoftmax, TensorTanh
 
 
 ACTIVATIONS = {
     'relu': TensorReLU,
     'sigmoid': TensorSigmoid,
     'softmax': TensorSoftmax,
-    'tanh': TensorSigmoid,
+    'tanh': TensorTanh,
     'linear': lambda x: x
 }
 

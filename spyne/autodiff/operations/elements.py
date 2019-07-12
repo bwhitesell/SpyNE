@@ -19,7 +19,7 @@ class TensorSum(UniTensorOperation):
                 return g * np.ones(internal_shape)
             else:
                 raise NotImplementedError('''the VJP builder for TensorSum can only handle 
-                                          scalar arguments for now.''')
+                                          single-axis arguments for now.''')
         return a_vjp
 
 
