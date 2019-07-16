@@ -48,7 +48,7 @@ class TensorSigmoid(UniTensorOperation):
 
         @nest_func(func)
         def a_vjp(g):
-            return g * (e / (e**2 + 1))
+            return np.multiply(g, np.divide(e, np.square((1 + e))))
 
         return a_vjp
 

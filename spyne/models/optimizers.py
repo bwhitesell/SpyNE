@@ -1,11 +1,11 @@
 import numpy as np
 
 from spyne.autodiff.differentiation.derivatives import BackwardsPass
-from spyne.autodiff.variables.variables import Tensor
+from spyne.autodiff.variables.variables import Tensor, TensorConst
 
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import SGDRegressor
-from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import mean_squared_error, log_loss
 
 
 class BaseOptimizer:
@@ -54,9 +54,9 @@ class BaseOptimizer:
                 # control outputs
                 self._handle_prints(epoch, batch, n_batches)
             # eval performance
-            rfc = RandomForestRegressor(n_estimators=10)
+            rfc = LogisticRegression(multi_class='auto', solver='liblinear')
             rfc.fit(x_train, y_train)
-            rfc_ll = mean_squared_error(y_test, rfc.predict(x_test))
+            rfc_ll = log_loss(y_test, rfc.predict_proba(x_test))
             train_loss = self._eval_perf(x_train, y_train, nn)
             validation_loss = self._eval_perf(x_test, y_test, nn)
 
@@ -92,8 +92,10 @@ class BaseOptimizer:
         ys = []
         for t in range(n_evals):
             # forward pass
-            ys.append(model.forward_pass(Tensor(x[t])).value)
-        return mean_squared_error(y, ys)
+            y_hat = model.forward_pass(Tensor(x[t]))
+
+            loss += self.loss(TensorConst([y[t]]), y_hat).value
+        return loss / (t + 1)
 
     def _print_optimization_message(self, nn):
         print('----------------------')

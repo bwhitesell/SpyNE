@@ -50,6 +50,6 @@ class TensorNegLog(UniTensorOperation):
 
         @nest_func(func)
         def a_vjp(g):
-            return np.divide(-1 * g, a)
+            return np.divide(-g, a)
 
         return a_vjp

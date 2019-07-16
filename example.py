@@ -12,14 +12,14 @@ s = StandardScaler()
 x = s.fit_transform(load_boston()['data'])
 y = load_boston()['target']
 
-#build our nn
+# build our nn
 nn = NeuralNetwork()
-nn.add_layer(FullyConnectedLayer(neurons=5, activation='relu'))
-nn.add_layer(FullyConnectedLayer(neurons=5, activation='relu'))
+nn.add_layer(FullyConnectedLayer(neurons=100, activation='relu', dropout=.05))
 nn.add_layer(FullyConnectedLayer(neurons=1, activation='linear'))
 
 print('\n')
 print('Training a Multi-Layer-Perceptron...')
 # fit our nn
-nn.fit(x, y, batch_size=1, epochs=100, learning_rate=.003, loss='mse', optimizer='rmsprop', l2=.01, early_stopping=False)
+nn.fit(x, y, batch_size=1, epochs=10, learning_rate=.005, l2=.000001,
+       loss='mse', optimizer='rmsprop', early_stopping=True)
 
