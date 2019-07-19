@@ -44,11 +44,11 @@ class TensorSigmoid(UniTensorOperation):
         return e / (e + 1)
 
     def vector_jacobian_product(self, func=lambda g: g):
-        e = np.exp(self._a)
+        e = np.exp(-1 * self._a)
 
         @nest_func(func)
         def a_vjp(g):
-            return np.multiply(g, np.divide(e, np.square((1 + e))))
+            return np.multiply(g, e / (1 + e)**2)
 
         return a_vjp
 

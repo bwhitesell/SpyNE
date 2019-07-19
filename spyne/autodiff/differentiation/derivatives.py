@@ -56,7 +56,8 @@ class BackwardsPass:
 
     def _add_node(self, node, vjp):
         self.nodes.append(node)
-        if node not in self._partials:
+        if node.node_uid not in self._partials:
             self._partials[node.node_uid] = vjp
         else:
-            self._partials[node.node_uid] = lambda x: vjp(x) + self._partials[node.node_uid](x)
+            f_prior = self._partials[node.node_uid]
+            self._partials[node.node_uid] = lambda x: vjp(x) + f_prior(x)

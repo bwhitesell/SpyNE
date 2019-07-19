@@ -21,7 +21,7 @@ def one_hot_encode_categorical_target(y):
     n_categories = np.unique(y).size
     n_samples = y.size
     y_adj = np.zeros((n_samples, n_categories))
-    y_adj[np.arange(n_samples), y] = 1
+    y_adj[np.arange(n_samples), y-1] = 1
     return y_adj
 
 

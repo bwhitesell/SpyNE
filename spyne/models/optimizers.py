@@ -55,8 +55,8 @@ class BaseOptimizer:
                 self._handle_prints(epoch, batch, n_batches)
             # eval performance
             rfc = LogisticRegression(multi_class='auto', solver='liblinear')
-            rfc.fit(x_train, y_train)
-            rfc_ll = log_loss(y_test, rfc.predict_proba(x_test))
+            rfc.fit(x_train, np.where(y_train == 1)[1])
+            rfc_ll = log_loss(np.where(y_test == 1)[1], rfc.predict_proba(x_test))
             train_loss = self._eval_perf(x_train, y_train, nn)
             validation_loss = self._eval_perf(x_test, y_test, nn)
 

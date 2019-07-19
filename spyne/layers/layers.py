@@ -24,7 +24,7 @@ class FullyConnectedLayer:
         self.products_shape = self._get_product_shape(x)
 
         # xavier initialization
-        r = np.sqrt(6/(sum(self.input_shape) + sum(self.products_shape)))
+        r = np.sqrt(2/(sum(self.input_shape) + sum(self.products_shape)))
         self.w = self._add_var(np.random.uniform(-r, r, self.weights_shape))
         self.b = self._add_var(np.random.random(self.products_shape))
 
