@@ -1,8 +1,8 @@
 import numpy as np
 
-from spyne.autodiff.operations.arithmetic import TensorSubtraction, TensorElemMultiply, TensorAddition
-from spyne.autodiff.operations.elements import TensorSquared, TensorSum, TensorNegLog
-from spyne.autodiff.variables.variables import TensorConst
+from spyne.operations import TensorSubtraction, TensorElemMultiply, TensorAddition
+from spyne.operations import TensorSquared, TensorSum, TensorNegLog
+from spyne.data_structures import TensorConst
 
 
 def mean_squared_error(y, y_hat):

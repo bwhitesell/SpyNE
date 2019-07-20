@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..variables.variables import Tensor, TensorConst
+from spyne import Tensor, Constant
 
 
 def basis_vectors(x):

@@ -1,10 +1,10 @@
 import numpy as np
 
-from ..variables.variables import Tensor, TensorConst
+from spyne import Tensor, Constant
 
 
 def is_tensor(x):
-    return type(x) == Tensor or type(x) == TensorConst
+    return type(x) == Tensor or type(x) == Constant
 
 
 def nest_func(external_func):

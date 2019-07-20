@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..variables.variables import Tensor, TensorConst
+from spyne import Tensor, Constant
 
 
 class BaseOperation:
@@ -34,7 +34,7 @@ class BaseOperation:
 
     @staticmethod
     def is_tensor(x):
-        return type(x) == Tensor or type(x) == TensorConst
+        return type(x) == Tensor or type(x) == Constant
 
     @property
     def shape(self):

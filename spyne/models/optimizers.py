@@ -1,11 +1,10 @@
 import numpy as np
 
-from spyne.autodiff.differentiation.derivatives import BackwardsPass
-from spyne.autodiff.variables.variables import Tensor, TensorConst
+from spyne.differentiation import BackwardsPass
+from spyne.data_structures import Tensor, TensorConst
 
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import mean_squared_error, log_loss
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import log_loss
 
 
 class BaseOptimizer:

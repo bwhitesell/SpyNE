@@ -1,7 +1,7 @@
 import numpy as np
 
-from ..operations.base import UniTensorOperation, DualTensorOperation
-from ..variables.variables import Tensor
+from spyne.operations.base import UniTensorOperation, DualTensorOperation
+from spyne.data_structures import Tensor
 from .utils import basis_vectors
 
 

@@ -1,8 +1,6 @@
-import numpy as np
-
 from spyne.models import NeuralNetwork
 from spyne.layers import FullyConnectedLayer
-from spyne.autodiff.operations.utils import one_hot_encode_categorical_target
+from spyne.operations.utils import one_hot_encode_categorical_target
 from sklearn.datasets import load_wine
 from sklearn.preprocessing import StandardScaler
 

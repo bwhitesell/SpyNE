@@ -40,7 +40,7 @@ class Tensor(TensorBase):
     name = 'Tensor'
 
 
-class TensorConst(TensorBase):
+class Constant(TensorBase):
     name = 'Tensor Constant'
 
 

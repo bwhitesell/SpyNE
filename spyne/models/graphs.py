@@ -1,6 +1,6 @@
-from spyne.autodiff.variables.variables import Tensor, TensorConst
-from spyne.autodiff.operations.arithmetic import TensorAddition, TensorElemMultiply
-from spyne.autodiff.operations.elements import TensorSquared, TensorSum
+from spyne.data_structures import Tensor, TensorConst
+from spyne.operations import TensorAddition, TensorElemMultiply
+from spyne.operations import TensorSquared, TensorSum
 
 from .optimizers import OPTIMIZERS
 from .losses import LOSSES
