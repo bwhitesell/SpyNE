@@ -1,4 +1,4 @@
-from spyne.data_structures import Tensor, TensorConst
+from spyne.tensors import Tensor, TensorConst
 from spyne.operations import TensorAddition, TensorElemMultiply
 from spyne.operations import TensorSquared, TensorSum
 

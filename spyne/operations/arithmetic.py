@@ -53,34 +53,35 @@ class TensorMultiply(DualTensorOperation):
         a = self._a
         b = self._b
 
-        if len(self._b.shape) >= 2:
+        a_ndim = len(a.shape)
+        b_ndim = len(b.shape)
+
+        needs_transpose = b_ndim > 1 and a_ndim > 0
+        swap = (lambda x: np.swapaxes(x, -1, -2)) if needs_transpose else (lambda x: x)
+
+        if b_ndim > 1 and a_ndim > 0:
             @nest_func(func)
             def a_vjp(g):
-                return np.dot(g, np.swapaxes(b, -1, -2))
+                return np.tensordot(g, np.swapaxes(b, -1, -2), b_ndim - 1)
 
-        elif len(self._b.shape) == 1 and len(self._a.shape) >= 2:
+        else:
             @nest_func(func)
             def a_vjp(g):
-                return np.outer(g, b)
-        elif len(self._b.shape) == 1 and len(self._a.shape) == 1:
-            @nest_func(func)
-            def a_vjp(g):
-                return g * b
+                contract_num = max(0, len(b.shape) - (len(a.shape) != 0))
+                return np.tensordot(g, b, contract_num)
 
-        if len(self._a.shape) >= 2:
+        if a_ndim > 1 and b_ndim > 0:
             @nest_func(func)
             def b_vjp(g):
-                return np.dot(np.swapaxes(a, -1, -2), g)
+                out = swap(np.tensordot(
+                    g, a, [range(-a_ndim - b_ndim + 2, -b_ndim + 1), range(a_ndim - 1)]))
+                return out
 
-        elif len(self._a.shape) == 1 and len(self._b.shape) >= 2:
+        else:
             @nest_func(func)
             def b_vjp(g):
-                return np.outer(a, g)
-
-        elif len(self._a.shape) == 1 and len(self._b.shape) == 1:
-            @nest_func(func)
-            def b_vjp(g):
-                return g * a
+                contract_num = max(0, a_ndim - (b_ndim != 0))
+                return swap(np.tensordot(g, a, contract_num))
 
         return a_vjp, b_vjp
 

@@ -2,7 +2,7 @@ import numpy as np
 
 from spyne.operations import TensorSubtraction, TensorElemMultiply, TensorAddition
 from spyne.operations import TensorSquared, TensorSum, TensorNegLog
-from spyne.data_structures import TensorConst
+from spyne.tensors import TensorConst
 
 
 def mean_squared_error(y, y_hat):

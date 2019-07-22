@@ -1,1 +1,1 @@
-from .data_structures import Tensor, Constant
+from .tensors import Tensor, Constant

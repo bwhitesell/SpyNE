@@ -1,13 +1,15 @@
 import numpy as np
 
-from spyne.operations import TensorMultiply, TensorAddition
-from spyne.data_structures import Tensor
+from spyne.operations import TensorMultiply, TensorAddition, TensorDuplicateRows
+from spyne.tensors import Tensor
 
 from .constants import ACTIVATIONS
 
 
 class FullyConnectedLayer:
-    w = m = b = z = a = None
+    """ A fully connected layer of a multi-layer perceptron. """
+    
+    w = m = b = _b = z = a = None
     input_shape = w_shape = None
     variables = {}
     weights_shape = products_shape = ()
@@ -24,9 +26,10 @@ class FullyConnectedLayer:
         self.products_shape = self._get_product_shape(x)
 
         # xavier initialization
-        r = np.sqrt(2/(sum(self.input_shape) + sum(self.products_shape)))
+        r = np.sqrt(6/(self.input_shape[1] + self.neurons))
         self.w = self._add_var(np.random.uniform(-r, r, self.weights_shape))
-        self.b = self._add_var(np.random.random(self.products_shape))
+        self._b = self._add_var(np.random.random((self.neurons,)))
+        self.b = TensorDuplicateRows(self._b, x.shape[0])
 
     def feed(self, x):
         self._check_input(x)
@@ -45,11 +48,7 @@ class FullyConnectedLayer:
         return a
 
     def _get_weights_shape(self, x):
-        n_dims = len(x.shape)
-        w_shape = list(x.shape)
-        w_shape[n_dims - 2] = x.shape[n_dims - 1]
-        w_shape.append(self.neurons)
-        return tuple(w_shape)
+        return x.shape[1], self.neurons
 
     def _get_product_shape(self, x):
         w_shape = self._get_weights_shape(x)
@@ -59,7 +58,7 @@ class FullyConnectedLayer:
 
         else:
             x_comp = x_shape[:len(x_shape)-2]
-            w_comp = w_shape[:len(w_shape) - 2] + \
+            w_comp = w_shape[:len(w_shape) - 1] + \
                 w_shape[len(w_shape) - 1:]
             return w_comp + x_comp
 

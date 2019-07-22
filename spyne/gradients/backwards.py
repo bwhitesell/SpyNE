@@ -17,16 +17,16 @@ class BackwardsPass:
         self.jac_external_shape = self.var.shape if self.var.shape != (1,) else ()
         self.vjps = self._build_vjps()
 
-    def execute(self, update=False, alpha=.01):
+    def execute(self):
         jac = {}
         for node_uid, node in self.vjps.items():
             g = [node[1](b) for b in basis_vectors(self.var)]
+
             jac[node_uid] = np.reshape(
                 g,
                 self.jac_external_shape + node[0].shape
             )
-            if update:
-                node[0].value += jac[node_uid] * alpha
+
         return jac
 
     def _build_vjps(self):

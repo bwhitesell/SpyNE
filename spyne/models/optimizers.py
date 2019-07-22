@@ -1,7 +1,7 @@
 import numpy as np
 
-from spyne.differentiation import BackwardsPass
-from spyne.data_structures import Tensor, TensorConst
+from spyne.gradients import BackwardsPass
+from spyne.tensors import Tensor, TensorConst
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import log_loss
