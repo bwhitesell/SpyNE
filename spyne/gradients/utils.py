@@ -11,4 +11,4 @@ def basis_vectors(x):
 
 
 def _is_tensor(node):
-    return issubclass(node.__class__, Tensor) or issubclass(node.__class__, TensorConst)
+    return issubclass(node.__class__, Tensor) or issubclass(node.__class__, Constant)

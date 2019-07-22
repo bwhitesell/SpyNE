@@ -1,7 +1,7 @@
 import numpy as np
 
 from spyne.operations.base import UniTensorOperation, DualTensorOperation
-from spyne.data_structures import Tensor
+from spyne.tensors import Tensor
 from .utils import basis_vectors
 
 
@@ -17,7 +17,7 @@ class BackwardsPass:
         self.jac_external_shape = self.var.shape if self.var.shape != (1,) else ()
         self.vjps = self._build_vjps()
 
-    def jacobians(self, update=False, alpha=.01):
+    def execute(self, update=False, alpha=.01):
         jac = {}
         for node_uid, node in self.vjps.items():
             g = [node[1](b) for b in basis_vectors(self.var)]
