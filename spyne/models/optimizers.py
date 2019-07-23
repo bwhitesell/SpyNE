@@ -1,7 +1,7 @@
 import numpy as np
 
 from spyne.gradients import BackwardsPass
-from spyne.tensors import Tensor, TensorConst
+from spyne import Tensor, Constant
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import log_loss
@@ -31,19 +31,17 @@ class BaseOptimizer:
 
                 x_batch = x_train[start_splice:end_splice, ...]
                 y_batch = y_train[start_splice:end_splice, ...]
+                # forward pass
+                y_hat = nn.forward_pass(Tensor(x_batch))
+                loss = self.loss(Tensor(y_batch), y_hat)
 
-                for elem in range(batch_size):
-                    # forward pass
-                    y_hat = nn.forward_pass(Tensor(x_batch[elem, ...]))
-                    loss = self.loss(Tensor([y_batch[elem, ...]]), y_hat)
-
-                    # backwards pass
-                    grad = BackwardsPass(loss).jacobians()
-                    for var in grad:
-                        if var not in batch_grad:
-                            batch_grad[var] = grad[var]
-                        else:
-                            batch_grad[var] += grad[var]
+                # backwards pass
+                grad = BackwardsPass(loss).jacobians()
+                for var in grad:
+                    if var not in batch_grad:
+                        batch_grad[var] = grad[var]
+                    else:
+                        batch_grad[var] += grad[var]
 
                 for var in grad:
                     grad[var] = grad[var] / batch_size
@@ -93,7 +91,7 @@ class BaseOptimizer:
             # forward pass
             y_hat = model.forward_pass(Tensor(x[t]))
 
-            loss += self.loss(TensorConst([y[t]]), y_hat).value
+            loss += self.loss(Constant([y[t]]), y_hat).value
         return loss / (t + 1)
 
     def _print_optimization_message(self, nn):

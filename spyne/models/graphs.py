@@ -1,4 +1,4 @@
-from spyne.tensors import Tensor, TensorConst
+from spyne import Tensor, Constant
 from spyne.operations import TensorAddition, TensorElemMultiply
 from spyne.operations import TensorSquared, TensorSum
 
@@ -16,8 +16,7 @@ class NeuralNetwork:
     def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.01, l2=0,
             early_stopping=True):
         if not self.setup:
-            self._setup_layers(Tensor(x[0]))
-            self.setup = True
+            self._setup_layers(Tensor(x))
         self.l2 = l2
         optimizer = OPTIMIZERS[optimizer](self._build_loss_function(loss), learning_rate)
         optimizer.optimize(self, x, y, batch_size, epochs, early_stopping=early_stopping)
@@ -42,7 +41,7 @@ class NeuralNetwork:
                 weights_mag = TensorAddition(weights_mag, weights)
             else:
                 weights_mag = weights
-        return TensorElemMultiply(TensorConst([self.l2]), weights_mag)
+        return TensorElemMultiply(Constant([self.l2]), weights_mag)
 
     @property
     def n_layers(self):
@@ -71,3 +70,4 @@ class NeuralNetwork:
             x = layer.feed(x)
             for var_uid, var in layer.variables.items():
                 self.vars[var_uid] = var
+        self.setup = True

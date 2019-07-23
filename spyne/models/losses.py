@@ -1,8 +1,7 @@
 import numpy as np
-
+from spyne import Tensor, Constant
 from spyne.operations import TensorSubtraction, TensorElemMultiply, TensorAddition
 from spyne.operations import TensorSquared, TensorSum, TensorNegLog
-from spyne.tensors import TensorConst
 
 
 def mean_squared_error(y, y_hat):
@@ -17,12 +16,12 @@ def log_loss(y, y_hat):
     pos_prob_rect = TensorElemMultiply(pos_prob_log, y)
 
     neg_prob = TensorSubtraction(
-        TensorConst(np.ones(y_hat.shape)),
+        Constant(np.ones(y_hat.shape)),
         y_hat,
     )
     neg_prob_log = TensorNegLog(neg_prob)
     neg_outcomes = TensorSubtraction(
-        TensorConst(np.ones(y.shape)),
+        Constant(np.ones(y.shape)),
         y,
     )
     neg_prob_rect = TensorElemMultiply(neg_prob_log, neg_outcomes)

@@ -41,11 +41,8 @@ class FullyConnectedLayer:
         return self.a
 
     def _dropout(self, a):
-        n_drops = np.random.binomial(a.size, self.dropout)
-        indices = np.random.choice(np.arange(a.shape[0]), replace=False,
-                                   size=n_drops)
-        a[indices] = 0
-        return a
+        drops = np.random.binomial(1, self.dropout, self.a.shape)
+        return drops * a
 
     def _get_weights_shape(self, x):
         return x.shape[1], self.neurons
