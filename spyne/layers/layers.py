@@ -28,12 +28,12 @@ class FullyConnectedLayer:
         # xavier initialization
         r = np.sqrt(6/(self.input_shape[1] + self.neurons))
         self.w = self._add_var(np.random.uniform(-r, r, self.weights_shape))
-        self._b = self._add_var(np.random.random((self.neurons,)))
-        self.b = TensorDuplicateRows(self._b, x.shape[0])
+        self.b = self._add_var(np.random.random((self.neurons,)))
 
     def feed(self, x):
         self._check_input(x)
         self.m = TensorMultiply(x, self.w)
+        self._b = TensorDuplicateRows(self.b, x.shape[0])
         self.z = TensorAddition(self.m, self.b)
         self.a = self.activation(self.z)
         if self.dropout > 0:
@@ -73,7 +73,7 @@ class FullyConnectedLayer:
 
     def _check_input(self, x):
         """Give a user clear feedback if there is a shape mismatch."""
-        if x.shape != self.input_shape:
+        if x.shape[1] != self.input_shape[1]:
             raise ValueError(
                 f'''This layer is constructed to handle inputs of shape {self.input_shape},
                     not of shape {x.shape}'''

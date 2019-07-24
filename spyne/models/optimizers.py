@@ -36,7 +36,7 @@ class BaseOptimizer:
                 loss = self.loss(Tensor(y_batch), y_hat)
 
                 # backwards pass
-                grad = BackwardsPass(loss).jacobians()
+                grad = BackwardsPass(loss).execute()
                 for var in grad:
                     if var not in batch_grad:
                         batch_grad[var] = grad[var]
@@ -85,14 +85,10 @@ class BaseOptimizer:
 
     def _eval_perf(self, x, y, model):
         n_evals = x.shape[0]
-        loss = 0
-        ys = []
-        for t in range(n_evals):
-            # forward pass
-            y_hat = model.forward_pass(Tensor(x[t]))
+        y_hat = model.forward_pass(Tensor(x))
 
-            loss += self.loss(Constant([y[t]]), y_hat).value
-        return loss / (t + 1)
+        loss = self.loss(Constant(y), y_hat).value
+        return loss / n_evals
 
     def _print_optimization_message(self, nn):
         print('----------------------')

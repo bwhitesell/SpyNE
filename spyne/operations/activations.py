@@ -57,17 +57,16 @@ class TensorSoftmax(UniTensorOperation):
     name = 'Tensor Softmax'
 
     def execute(self):
-        exp_sum = np.exp(self._a).sum()
-        return np.exp(self._a) / exp_sum
+        return np.exp(self._a) / np.sum(np.exp(self._a), axis=1)[:, None]
 
     def vector_jacobian_product(self, func=lambda g: g):
         a = self._a
 
         @nest_func(func)
         def a_vjp(g):
-            exp_sum = np.exp(a).sum()
-            num = np.multiply(np.exp(a), exp_sum) - np.exp(2 * a)
-            return np.multiply(g, num / np.square(exp_sum))
+            row_exp_sum = np.sum(np.exp(a), axis=1)
+            elems = np.exp(a) * row_exp_sum[:, None] - np.square(np.exp(a))
+            return np.multiply(g, elems)
 
         return a_vjp
 
