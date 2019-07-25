@@ -34,7 +34,7 @@ class FullyConnectedLayer:
         self._check_input(x)
         self.m = TensorMultiply(x, self.w)
         self._b = TensorDuplicateRows(self.b, x.shape[0])
-        self.z = TensorAddition(self.m, self.b)
+        self.z = TensorAddition(self.m, self._b)
         self.a = self.activation(self.z)
         if self.dropout > 0:
             self.a.value = self._dropout(self.a.value)

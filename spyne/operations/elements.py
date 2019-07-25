@@ -68,6 +68,7 @@ class TensorDuplicateRows(UniTensorOperation):
         return np.ones((self.n_rows,) + self._a.shape) * self._a
 
     def vector_jacobian_product(self, func=lambda g: g):
+
         @nest_func(func)
         def a_vjp(g):
             return np.sum(g, axis=0)

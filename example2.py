@@ -14,14 +14,17 @@ x = scaler.fit_transform(wine['data'])
 y = one_hot_encode_categorical_target(wine['target'])
 # build our nn
 nn = NeuralNetwork()
-# nn.add_layer(FullyConnectedLayer(neurons=50, activation='relu'))
 nn.add_layer(FullyConnectedLayer(neurons=3, activation='softmax'))
 
 print('\n')
 print('Training a Multi-Layer-Perceptron...')
 # fit our nn
-nn.fit(x, y, batch_size=50, epochs=5, learning_rate=.005, optimizer='rmsprop', loss='logloss', l2=20,
+nn.fit(x, y, batch_size=1, epochs=5, learning_rate=.01, optimizer='rmsprop', loss='logloss',
        early_stopping=False)
+
+print(y[0])
+import numpy as np
+print(nn.predict(np.array([[x[0]]])))
 
 
 

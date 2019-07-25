@@ -33,7 +33,7 @@ class BaseOptimizer:
                 y_batch = y_train[start_splice:end_splice, ...]
                 # forward pass
                 y_hat = nn.forward_pass(Tensor(x_batch))
-                loss = self.loss(Tensor(y_batch), y_hat)
+                loss = self.loss(Constant(y_batch), y_hat)
 
                 # backwards pass
                 grad = BackwardsPass(loss).execute()
@@ -42,7 +42,6 @@ class BaseOptimizer:
                         batch_grad[var] = grad[var]
                     else:
                         batch_grad[var] += grad[var]
-
                 for var in grad:
                     grad[var] = grad[var] / batch_size
 
