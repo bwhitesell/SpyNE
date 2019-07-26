@@ -3,7 +3,7 @@ import numpy as np
 from spyne.operations import TensorMultiply, TensorAddition, TensorDuplicateRows
 from spyne.tensors import Tensor
 
-from .constants import ACTIVATIONS
+from .constants import ACTIVATIONS, XAVIER_INIT_PARAM
 
 
 class FullyConnectedLayer:
@@ -16,18 +16,18 @@ class FullyConnectedLayer:
 
     def __init__(self, neurons, activation='relu', dropout=0):
         self.neurons = neurons
-        self.activation = ACTIVATIONS[activation]
         self.dropout = dropout
+        self.activation_key = activation
 
     def setup(self, x):
         self.variables = {}
         self.input_shape = x.shape
         self.weights_shape = self._get_weights_shape(x)
         self.products_shape = self._get_product_shape(x)
+        self._process_activation()
 
         # xavier initialization
-        r = np.sqrt(6/(self.input_shape[1] + self.neurons))
-        self.w = self._add_var(np.random.uniform(-r, r, self.weights_shape))
+        self.w = self._add_var(np.random.uniform(-self.r, self.r, self.weights_shape))
         self.b = self._add_var(np.random.random((self.neurons,)))
 
     def feed(self, x):
@@ -78,3 +78,8 @@ class FullyConnectedLayer:
                 f'''This layer is constructed to handle inputs of shape {self.input_shape},
                     not of shape {x.shape}'''
             )
+
+    def _process_activation(self):
+        self.activation = ACTIVATIONS[self.activation_key]
+        r = np.sqrt(6 / (self.input_shape[1] + self.neurons))
+        self.r = XAVIER_INIT_PARAM[self.activation_key] * r
