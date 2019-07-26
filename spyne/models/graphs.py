@@ -58,8 +58,7 @@ class NeuralNetwork:
 
     def _build_loss_function(self, loss):
         def loss_function(y, y_hat):
-            spec_loss = LOSSES[loss](y, y_hat)
-
+            spec_loss = TensorAddition(LOSSES[loss](y, y_hat), self.l2_loss())
             return spec_loss
         return loss_function
 

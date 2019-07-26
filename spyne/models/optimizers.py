@@ -4,6 +4,7 @@ from spyne.gradients import BackwardsPass
 from spyne import Tensor, Constant
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import log_loss
 
 
@@ -50,7 +51,8 @@ class BaseOptimizer:
                 # control outputs
                 self._handle_prints(epoch, batch, n_batches)
             # eval performance
-            rfc = LogisticRegression(multi_class='auto', solver='liblinear')
+            #rfc = LogisticRegression(multi_class='auto', solver='liblinear')
+            rfc = RandomForestClassifier(n_estimators=10)
             rfc.fit(x_train, np.where(y_train == 1)[1])
             rfc_ll = log_loss(np.where(y_test == 1)[1], rfc.predict_proba(x_test))
             train_loss = self._eval_perf(x_train, y_train, nn)
@@ -86,7 +88,7 @@ class BaseOptimizer:
         n_evals = x.shape[0]
         y_hat = model.forward_pass(Tensor(x))
 
-        loss = self.loss(Constant(y), y_hat).value
+        loss = self.loss(Constant(y), y_hat).value[0]
         return loss / n_evals
 
     def _print_optimization_message(self, nn):
