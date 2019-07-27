@@ -3,10 +3,6 @@ import numpy as np
 from spyne.gradients import BackwardsPass
 from spyne import Tensor, Constant
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import log_loss
-
 
 class BaseOptimizer:
     name = 'Base Optimizer'
@@ -51,21 +47,17 @@ class BaseOptimizer:
                 # control outputs
                 self._handle_prints(epoch, batch, n_batches)
             # eval performance
-            #rfc = LogisticRegression(multi_class='auto', solver='liblinear')
-            rfc = RandomForestClassifier(n_estimators=10)
-            rfc.fit(x_train, np.where(y_train == 1)[1])
-            rfc_ll = log_loss(np.where(y_test == 1)[1], rfc.predict_proba(x_test))
             train_loss = self._eval_perf(x_train, y_train, nn)
             validation_loss = self._eval_perf(x_test, y_test, nn)
 
             # early stopping
             if early_stopping and epoch > 0:
                 if validation_loss > lst_epch_val_loss:
-                    self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss, rfc_ll)
+                    self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss)
                     break
             lst_epch_val_loss = validation_loss
 
-            self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss, rfc_ll)
+            self._handle_prints(epoch, batch, n_batches, train_loss, validation_loss)
 
     @staticmethod
     def _train_val_split(x, y, split_size=.8):
@@ -99,11 +91,10 @@ class BaseOptimizer:
         print(f'Using optimizer: {self.name}')
         print('\n')
 
-    def _handle_prints(self, epoch, batch, n_batches, train_loss=0, val_loss=0, rfc_ll=0):
+    def _handle_prints(self, epoch, batch, n_batches, train_loss=0, val_loss=0):
         end = '\n' if (train_loss != 0 or val_loss != 0) else '\r'
         print(f'Batch {batch + 1}/{n_batches}, {round((batch + 1)/n_batches * 100, 4)}% for '
-              + f'epoch {epoch}:  Train Loss: {round(train_loss, 4)} | Val Loss: {round(val_loss, 4)}'
-              + f' | rfc: {rfc_ll}', end=end)
+              + f'epoch {epoch}:  Train Loss: {round(train_loss, 4)} | Val Loss: {round(val_loss, 4)}', end=end)
         self.print_iter += 1
 
     def _update(self, nn, grad):

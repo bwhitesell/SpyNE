@@ -21,7 +21,6 @@ class BackwardsPass:
         jac = {}
         for node_uid, node in self.vjps.items():
             g = [node[1](b) for b in basis_vectors(self.var)]
-
             jac[node_uid] = np.reshape(
                 g,
                 self.jac_external_shape + node[0].shape

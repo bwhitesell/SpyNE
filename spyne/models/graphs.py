@@ -1,3 +1,4 @@
+import numpy as np
 from spyne import Tensor, Constant
 from spyne.operations import TensorAddition, TensorElemMultiply
 from spyne.operations import TensorSquared, TensorSum
@@ -15,6 +16,9 @@ class NeuralNetwork:
 
     def fit(self, x, y, batch_size=1, epochs=1, optimizer='sgd', loss='mse', learning_rate=.01, l2=0,
             early_stopping=True):
+
+        if len(y.shape) == 1:
+            y = np.reshape(y, y.shape + (1,))
         if not self.setup:
             self._setup_layers(Tensor(x))
         self.l2 = l2
