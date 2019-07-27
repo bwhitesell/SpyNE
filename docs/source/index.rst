@@ -11,10 +11,6 @@ Guide
    :maxdepth: 2
     
    Tensors
-   Operations
-   AutoDiff
-   Layers
-   Models
 
 
 Indices and tables
