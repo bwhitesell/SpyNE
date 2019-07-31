@@ -27,6 +27,7 @@ learning frameworks.
 ### Installation (python 3.6+)
 ```
 $ git clone https://github.com/bwhitesell/SpyNE
+$ cd SpyNE
 $ python setup.py install
 ```
 
