@@ -88,13 +88,14 @@ Completed
 - L2 Regularization
 - Fully Connected Layers
 - Dropout
+- Unit Test coverage up to MLP
+
 
 In Development
 - Documentation
-- Convolutional Layers (2d / 1d)
-- Unit Test coverage up to MLP
     
 Not Implemented
+- Convolutional Layers (2d / 1d)
 - Recurrent Layers (LSTM)
 - GPU support (Probably through CuPy)
 ```
