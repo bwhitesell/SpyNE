@@ -33,6 +33,7 @@ $ python setup.py install
 
 ### Documentation
 In Progress
+https://medium.com/@whitesell.ben/how-to-build-your-own-deep-learning-framework-its-easy-i-ll-prove-it-c859cb790386
 
 ### Example (Defining a Neural Network in 10 Seconds)
 ```python
