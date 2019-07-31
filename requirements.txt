@@ -1,2 +1,1 @@
 numpy==1.16.4
-sklearn==0.0
