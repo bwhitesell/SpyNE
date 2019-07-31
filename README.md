@@ -24,7 +24,7 @@ SpyNE features custom implementations of the following:
 Generally these are the fundamental components to all deep
 learning frameworks.
 
-### Installation
+### Installation (python 3.6+)
 ```
 $ git clone https://github.com/bwhitesell/SpyNE
 $ python setup.py install
